@@ -4,4 +4,5 @@ export interface ComicsTable {
   author: string
   description: string
   releaseDate?: string
+  user: string
 }
