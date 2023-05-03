@@ -5,7 +5,7 @@ import crypto from 'node:crypto'
 import { isAuthenticated } from '../middlewares/checkJWT'
 
 export async function chapterRoutes(app: FastifyInstance) {
-  app.post('/', { preHandler: [isAuthenticated] }, async (request, reply) => {
+  app.post('/', async (request, reply) => {
     const createChapterSchema = z.object({
       chapterTitle: z.string(),
       chapterNumber: z.string(),

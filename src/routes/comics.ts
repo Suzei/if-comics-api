@@ -7,25 +7,31 @@ import { isAuthenticated } from '../middlewares/checkJWT'
 export async function comicRoutes(app: FastifyInstance) {
   app.post(
     '/',
-    { preHandler: [isAuthenticated] },
+    // { preHandler: [isAuthenticated] },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const createComicSchema = z.object({
-        user: z.string().uuid(),
         title: z.string(),
         author: z.string(),
         description: z.string(),
+        user_id: z.string(),
       })
 
-      const { author, description, title, user } = createComicSchema.parse(
+      const { author, description, title, user_id } = createComicSchema.parse(
         request.body,
       )
 
+      const hasSameTitle = await knex('comics').where('title', title).first()
+
+      if (hasSameTitle) {
+        throw new Error('Esse título já existe!')
+      }
+
       await knex('comics').insert({
-        user,
         id: crypto.randomUUID(),
         title,
         author,
         description,
+        user_id,
       })
 
       return reply.status(201).send()
