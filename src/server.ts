@@ -7,18 +7,23 @@ import { chapterRoutes } from './routes/chapters'
 import { loginRoutes } from './routes/login'
 import { reset } from './routes/reset'
 import fastifyIO from 'fastify-socket.io'
+import { S3ServiceRoute } from './routes/s3'
+import multer from 'fastify-multer'
+
 const app = Fastify()
-app.register(cors, {
-  origin: '*',
-})
 
 app.register(fastifyIO)
 
 app.register(cookie)
+app.register(cors, {
+  origin: '*',
+})
+app.register(multer.contentParser)
 
 app.register(loginRoutes, { prefix: 'login' })
 app.register(comicRoutes, { prefix: 'comics' })
 app.register(chapterRoutes, { prefix: 'chapters' })
+app.register(S3ServiceRoute)
 app.register(reset)
 
 app.ready().then(() => {

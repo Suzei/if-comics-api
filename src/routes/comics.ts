@@ -2,23 +2,28 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import crypto from 'node:crypto'
 import { knex } from '../database'
-import { isAuthenticated } from '../middlewares/checkJWT'
+import multer, { memoryStorage } from 'fastify-multer'
+import { PostImageToS3 } from '../aws/PostImageToS3'
 
 export async function comicRoutes(app: FastifyInstance) {
+  const upload = multer({ storage: memoryStorage() }).single('image')
+
   app.post(
     '/',
-    // { preHandler: [isAuthenticated] },
+    { preHandler: [upload] },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const createComicSchema = z.object({
         title: z.string(),
         author: z.string(),
         description: z.string(),
         user_id: z.string(),
+        comic_cover: z.string(),
       })
 
-      const { author, description, title, user_id } = createComicSchema.parse(
-        request.body,
-      )
+      const imageName = PostImageToS3(request.file)
+
+      const { author, description, title, user_id, comic_cover } =
+        createComicSchema.parse(request.body)
 
       const hasSameTitle = await knex('comics').where('title', title).first()
 
@@ -31,6 +36,7 @@ export async function comicRoutes(app: FastifyInstance) {
         title,
         author,
         description,
+        comic_cover: imageName,
         user_id,
       })
 
