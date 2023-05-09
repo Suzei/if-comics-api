@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "tsx watch ./src/server.ts",
@@ -23,6 +27,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.328.0",
+    "@aws-sdk/s3-request-presigner": "^3.329.0",
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.2.1",
     "@fastify/multipart": "^7.6.0",
@@ -36,6 +41,7 @@
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",
     "multer": "^1.4.5-lts.1",
+    "pg": "^8.10.0",
     "sharp": "^0.32.1",
     "socket.io": "^4.6.1",
     "sqlite3": "^5.1.6",

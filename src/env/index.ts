@@ -8,6 +8,7 @@ const envSchema = z.object({
   MIGRATIONS_DIR: z.string(),
   PORT: z.number().default(3333),
   REGION: z.string(),
+  DATABASE_CLIENT: z.enum(['sqlite', 'pg']),
   BUCKET_NAME_IMAGES: z.string(),
   ACCESS_SECRET_KEY: z.string(),
   ACCESS_KEY: z.string(),
