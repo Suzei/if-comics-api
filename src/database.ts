@@ -7,10 +7,13 @@ if (!process.env.DATABASE_URL) {
 
 // aqui, eu consigo configurar meu banco de dados knex que:
 export const config: Knex.Config = {
-  client: 'sqlite', // terá o sqlite como seu driver padrão
-  connection: {
-    filename: env.DATABASE_URL, // e que quando conectar, criará um arquivo que vai ter os dados do banco localmente.
-  },
+  client: env.DATABASE_CLIENT, // terá o sqlite como seu driver padrão
+  connection:
+    env.DATABASE_CLIENT === 'sqlite'
+      ? {
+          filename: env.DATABASE_URL,
+        }
+      : env.DATABASE_URL,
 
   useNullAsDefault: true,
   migrations: {

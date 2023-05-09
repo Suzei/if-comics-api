@@ -5,4 +5,6 @@ export interface ComicsTable {
   description: string
   releaseDate?: string
   user: string
+  comic_cover: string
+  imageUrl: string
 }

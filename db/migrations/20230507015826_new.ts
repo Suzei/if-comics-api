@@ -6,7 +6,10 @@ export async function up(knex: Knex): Promise<void> {
     table.string('title').notNullable()
     table.string('user_id').notNullable()
     table.string('author').notNullable()
-    table.string('comic_cover').notNullable()
+    table.string('description').notNullable()
+    table.string('comic_cover')
+    table.string('imageUrl')
+    table.integer('likes')
   })
 }
 

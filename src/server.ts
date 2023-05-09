@@ -8,7 +8,6 @@ import { loginRoutes } from './routes/login'
 import { reset } from './routes/reset'
 import fastifyIO from 'fastify-socket.io'
 import { S3ServiceRoute } from './routes/s3'
-import multer from 'fastify-multer'
 
 const app = Fastify()
 
@@ -18,8 +17,7 @@ app.register(cookie)
 app.register(cors, {
   origin: '*',
 })
-app.register(multer.contentParser)
-
+app.register(require('@fastify/multipart'))
 app.register(loginRoutes, { prefix: 'login' })
 app.register(comicRoutes, { prefix: 'comics' })
 app.register(chapterRoutes, { prefix: 'chapters' })
