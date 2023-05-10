@@ -6,7 +6,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['dev', 'test', 'production']).default('production'),
   DATABASE_URL: z.string(),
   MIGRATIONS_DIR: z.string(),
-  PORT: z.number().default(3333),
+  PORT: z.coerce.number().default(3333),
   REGION: z.string(),
   DATABASE_CLIENT: z.enum(['sqlite', 'pg']),
   BUCKET_NAME_IMAGES: z.string(),
