@@ -5,6 +5,7 @@ import { knex } from '../database'
 import multer, { memoryStorage } from 'fastify-multer'
 import { env } from '../env'
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -14,7 +15,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const upload = multer({ storage: memoryStorage(), dest: 'uploads/' })
 const generateFileName = (bytes = 32) => randomBytes(bytes).toString('hex')
-
+let fileName
 const s3Client = new S3Client({
   region: env.REGION,
   credentials: {
@@ -22,6 +23,15 @@ const s3Client = new S3Client({
     secretAccessKey: env.ACCESS_SECRET_KEY,
   },
 })
+
+export function deleteFile(fileName) {
+  const deleteParams = {
+    Bucket: env.BUCKET_NAME_IMAGES,
+    Key: fileName,
+  }
+
+  return s3Client.send(new DeleteObjectCommand(deleteParams))
+}
 
 export async function comicRoutes(app: FastifyInstance) {
   async function UploadRequest(request: FastifyRequest) {
@@ -67,14 +77,7 @@ export async function comicRoutes(app: FastifyInstance) {
         throw new Error('Esse título já existe!')
       }
 
-      let fileName
-
-      if (comic_cover === null) {
-        return
-      } else {
-        fileName = (await UploadRequest(request)).randomFileName
-        UploadRequest(request)
-      }
+      const fileName = (await UploadRequest(request)).randomFileName
 
       await knex('comics').insert({
         id: crypto.randomUUID(),
@@ -130,13 +133,17 @@ export async function comicRoutes(app: FastifyInstance) {
     return { comicById }
   })
 
-  app.delete('/:id', async (request) => {
+  app.delete('/:id', async (request, reply) => {
     const deleteComicSchema = z.object({
       id: z.string().uuid(),
     })
 
     const { id } = deleteComicSchema.parse(request.params)
+    const imageUrl = await knex('comics').where('id', id).first()
 
+    await deleteFile(imageUrl?.comic_cover)
     await knex('comics').delete().where('id', id)
+
+    reply.redirect('/')
   })
 }

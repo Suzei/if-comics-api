@@ -49,6 +49,18 @@ export async function chapterRoutes(app: FastifyInstance) {
 
     const { comicId, id } = deleteChapterSchema.parse(request.params)
 
-    await knex('chapters').delete().where('comic_id', comicId).where('id', id)
+    await knex('chapters').delete().where({
+      comicId,
+      id,
+    })
+  })
+
+  app.delete('/:comicId', async (request, reply) => {
+    const deleteAllChapters = z.object({
+      comicId: z.string(),
+    })
+
+    const { comicId } = deleteAllChapters.parse(request.params)
+    await knex('chapters').delete().where('comic_id', comicId)
   })
 }
