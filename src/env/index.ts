@@ -12,6 +12,7 @@ const envSchema = z.object({
   BUCKET_NAME_IMAGES: z.string(),
   ACCESS_SECRET_KEY: z.string(),
   ACCESS_KEY: z.string(),
+  BUCKET_NAME_PDF: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)

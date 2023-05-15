@@ -15,7 +15,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const upload = multer({ storage: memoryStorage(), dest: 'uploads/' })
 const generateFileName = (bytes = 32) => randomBytes(bytes).toString('hex')
-let fileName
+
 const s3Client = new S3Client({
   region: env.REGION,
   credentials: {
@@ -115,8 +115,6 @@ export async function comicRoutes(app: FastifyInstance) {
       comic.imageUrl = await getObjectSignedURL(comic.comic_cover)
     }
 
-    console.log(comics)
-
     return { comics }
   })
 
@@ -141,9 +139,37 @@ export async function comicRoutes(app: FastifyInstance) {
     const { id } = deleteComicSchema.parse(request.params)
     const imageUrl = await knex('comics').where('id', id).first()
 
-    await deleteFile(imageUrl?.comic_cover)
+    await deleteFile(imageUrl.comic_cover)
     await knex('comics').delete().where('id', id)
+  })
+  // LIKE SYSTEM
+  app.post('/:id/liked', async (request, reply) => {
+    const LikeComicSchema = z.object({
+      id: z.string().uuid(),
+    })
 
-    reply.redirect('/')
+    const { id } = LikeComicSchema.parse(request.params)
+    const liked = await knex('comics').where('id', id).first()
+    await knex('comics')
+      .where('id', id)
+      .first()
+      .update({
+        likes: liked?.likes + 1,
+      })
+  })
+
+  app.post('/:id/disliked', async (request, reply) => {
+    const DislikeComicSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const { id } = DislikeComicSchema.parse(request.params)
+    const liked = await knex('comics').where('id', id).first()
+    await knex('comics')
+      .where('id', id)
+      .first()
+      .update({
+        likes: liked?.likes - 1,
+      })
   })
 }
