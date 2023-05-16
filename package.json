@@ -12,7 +12,8 @@
     "server": "tsx watch ./src/server.ts",
     "lint": "eslint src --ext .ts --fix",
     "knex": "node --loader tsx ./node_modules/knex/bin/cli.js",
-    "build": "tsup src --out-dir dist"
+    "build": "tsup src --out-dir dist",
+    "vercel-build": "npm install && npm run knex -- migrate:latest && npm run build"
   },
   "keywords": [],
   "author": "",
