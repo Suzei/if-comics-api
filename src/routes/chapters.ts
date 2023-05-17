@@ -70,7 +70,7 @@ export async function chapterRoutes(app: FastifyInstance) {
 
   async function getObjectSignedURL(key: string) {
     const params = {
-      Bucket: env.BUCKET_NAME_IMAGES,
+      Bucket: env.BUCKET_NAME_PDF,
       Key: key,
     }
 
@@ -103,6 +103,18 @@ export async function chapterRoutes(app: FastifyInstance) {
 
     return s3Client.send(new DeleteObjectCommand(deleteParams))
   }
+
+  app.get('/chapter/:id', async (request, response) => {
+    const getChapterByIdSchema = z.object({
+      id: z.string(),
+    })
+
+    const { id } = getChapterByIdSchema.parse(request.params)
+    const chapter = await knex('chapters').where('id', id).first()
+
+    chapter.fileUrl = await getObjectSignedURL(chapter?.chapterFile)
+    return chapter
+  })
 
   app.delete('/:comicId/:id', async (request) => {
     const deleteChapterSchema = z.object({
