@@ -9,13 +9,7 @@ import fastifyIO from 'fastify-socket.io'
 
 const app = Fastify()
 app.register(cors, {
-  origin: (origin, cb) => {
-    const hostname = new URL(origin).hostname
-
-    if (hostname === 'localhost') {
-      cb(null, true)
-    }
-  },
+  origin: true,
 })
 
 app.register(fastifyIO)
