@@ -64,12 +64,11 @@ export async function comicRoutes(app: FastifyInstance) {
         author: z.string(),
         description: z.string(),
         user_id: z.string(),
+        genres: z.string(),
       })
 
-      const { author, description, title, user_id } = createComicSchema.parse(
-        request.body,
-      )
-
+      const { author, description, title, user_id, genres } =
+        createComicSchema.parse(request.body)
       const hasSameTitle = await knex('comics').where('title', title).first()
 
       if (hasSameTitle) {
@@ -86,6 +85,7 @@ export async function comicRoutes(app: FastifyInstance) {
         description,
         user_id,
         comic_cover: fileName,
+        genres,
       })
 
       // app.io.emit('success', (socket) => {

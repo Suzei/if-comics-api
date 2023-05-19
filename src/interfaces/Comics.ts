@@ -8,4 +8,5 @@ export interface ComicsTable {
   comic_cover: string
   likes: number
   imageUrl: string
+  genres: string
 }
