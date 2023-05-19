@@ -88,10 +88,6 @@ export async function comicRoutes(app: FastifyInstance) {
         genres,
       })
 
-      // app.io.emit('success', (socket) => {
-      //   console.log(socket, 'foi criado com sucesso!!')
-      // })
-
       return reply.status(201).send({ message: 'Obra criada com sucesso!' })
     },
   })
@@ -114,10 +110,6 @@ export async function comicRoutes(app: FastifyInstance) {
     for (const comic of comics) {
       comic.imageUrl = await getObjectSignedURL(comic.comic_cover)
     }
-
-    const transformingStringsToArray = Array.from(comics[6].genres.split(','))
-    console.log(transformingStringsToArray)
-
     return { comics }
   })
 

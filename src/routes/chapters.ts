@@ -87,7 +87,9 @@ export async function chapterRoutes(app: FastifyInstance) {
     })
 
     const { comicId } = getChapterByIdSchema.parse(request.params)
-    const chapter = await knex('chapters').where('comicId', comicId)
+    const chapter = await knex('chapters')
+      .where('comicId', comicId)
+      .orderBy('chapterNumber', 'asc')
     for (const chapters of chapter) {
       chapters.fileUrl = await getObjectSignedURL(chapters.chapterFile)
     }
@@ -116,19 +118,21 @@ export async function chapterRoutes(app: FastifyInstance) {
     return chapter
   })
 
-  app.delete('/:comicId/:id', async (request) => {
+  app.delete('/chapter/:id', async (request) => {
     const deleteChapterSchema = z.object({
       id: z.string().uuid(),
-      comicId: z.string(),
     })
 
-    const { comicId, id } = deleteChapterSchema.parse(request.params)
-    const fileUrl = await knex('chapters').where({ id, comicId }).first()
+    const { id } = deleteChapterSchema.parse(request.params)
+    const fileUrl = await knex('chapters').where('id', id).first()
     await deleteFile(fileUrl.chapterFile)
     await knex('chapters').delete().where({
-      comicId,
       id,
     })
+
+    console.log(id)
+
+    return id
   })
 
   app.delete('/:comicId', async (request, reply) => {

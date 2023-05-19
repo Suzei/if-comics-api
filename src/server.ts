@@ -8,13 +8,20 @@ import { loginRoutes } from './routes/login'
 import fastifyIO from 'fastify-socket.io'
 
 const app = Fastify()
+app.register(cors, {
+  origin: (origin, cb) => {
+    const hostname = new URL(origin).hostname
+
+    if (hostname === 'localhost') {
+      cb(null, true)
+    }
+  },
+})
 
 app.register(fastifyIO)
 
 app.register(cookie)
-app.register(cors, {
-  origin: '*',
-})
+
 app.register(require('@fastify/multipart'))
 app.register(loginRoutes, { prefix: 'login' })
 app.register(comicRoutes, { prefix: 'comics' })
