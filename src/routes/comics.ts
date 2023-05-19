@@ -115,6 +115,9 @@ export async function comicRoutes(app: FastifyInstance) {
       comic.imageUrl = await getObjectSignedURL(comic.comic_cover)
     }
 
+    const transformingStringsToArray = Array.from(comics[6].genres.split(','))
+    console.log(transformingStringsToArray)
+
     return { comics }
   })
 
