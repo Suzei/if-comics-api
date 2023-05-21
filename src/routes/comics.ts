@@ -86,6 +86,7 @@ export async function comicRoutes(app: FastifyInstance) {
         user_id,
         comic_cover: fileName,
         genres,
+        createdAt: knex.fn.now(),
       })
 
       return reply.status(201).send({ message: 'Obra criada com sucesso!' })
@@ -153,18 +154,33 @@ export async function comicRoutes(app: FastifyInstance) {
       })
   })
 
-  app.post('/:id/disliked', async (request, reply) => {
-    const DislikeComicSchema = z.object({
+  app.post('/:id/unlike', async (request, reply) => {
+    const UnlikeComicSchema = z.object({
       id: z.string().uuid(),
     })
 
-    const { id } = DislikeComicSchema.parse(request.params)
-    const liked = await knex('comics').where('id', id).first()
+    const { id } = UnlikeComicSchema.parse(request.params)
+    const unliked = await knex('comics').where('id', id).first()
     await knex('comics')
       .where('id', id)
       .first()
       .update({
-        likes: liked?.likes - 1,
+        likes: unliked?.likes - 1,
       })
   })
+
+  // app.post('/:id/disliked', async (request, reply) => {
+  //   const DislikeComicSchema = z.object({
+  //     id: z.string().uuid(),
+  //   })
+
+  //   const { id } = DislikeComicSchema.parse(request.params)
+  //   const liked = await knex('comics').where('id', id).first()
+  //   await knex('comics')
+  //     .where('id', id)
+  //     .first()
+  //     .update({
+  //       likes: liked?.likes - 1,
+  //     })
+  // })
 }

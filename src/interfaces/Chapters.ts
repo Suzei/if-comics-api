@@ -5,4 +5,5 @@ export interface ChaptersTable {
   chapterNumber: string
   chapterFile: string
   fileUrl: string
+  createdAt: Date
 }

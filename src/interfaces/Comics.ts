@@ -9,4 +9,5 @@ export interface ComicsTable {
   likes: number
   imageUrl: string
   genres: string
+  createdAt: Date
 }

@@ -63,6 +63,7 @@ export async function chapterRoutes(app: FastifyInstance) {
         chapterNumber,
         chapterTitle,
         comicId,
+        createdAt: knex.fn.now(),
       })
       return reply.status(201).send()
     },
