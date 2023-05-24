@@ -117,7 +117,7 @@ export async function comicRoutes(app: FastifyInstance) {
   app.get('/byLikes', async () => {
     const comicsByLike = await knex('comics')
       .select('*')
-      .orderBy('likes', 'desc')
+      .orderBy('likes', 'asc')
     for (const comic of comicsByLike) {
       comic.imageUrl = await getObjectSignedURL(comic.comic_cover)
     }
